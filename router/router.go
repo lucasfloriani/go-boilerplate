@@ -13,7 +13,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-// Setup creates a the gin engine struct and add custom options to it
+// Setup creates a the gin engine struct and add default middlewares to it.
 func Setup(db *gorm.DB) *gin.Engine {
 	r := gin.Default()
 	r.Use(
@@ -26,7 +26,9 @@ func Setup(db *gorm.DB) *gin.Engine {
 	return r
 }
 
-// InitializeRoutes add routes to the system
+// InitializeRoutes add routes to the system by every
+// method called ServeXXXXXResource (like ServeArtistResource)
+// from the handlers.
 func InitializeRoutes(r *gin.Engine) {
 	authMiddleware := middleware.GetJWTAuth()
 

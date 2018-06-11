@@ -26,7 +26,7 @@ type (
 	}
 )
 
-// ServeArtistResource sets up the routing of artist endpoints and the corresponding handlers.
+// ServeArtistResource sets up the routing of artist endpoints and the corresponding handlers (routes)
 func ServeArtistResource(r *gin.RouterGroup, service artistService) {
 	at := &artistResource{service}
 	artistGroup := r.Group("/artists")
@@ -39,6 +39,8 @@ func ServeArtistResource(r *gin.RouterGroup, service artistService) {
 	}
 }
 
+// get verify rest params, call service method to execute business logic
+// and return JSON data
 func (r *artistResource) get(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("artistID"))
 	if err != nil {
@@ -59,6 +61,8 @@ func (r *artistResource) get(c *gin.Context) {
 	})
 }
 
+// query verify rest params, call service method to execute business logic
+// and return JSON data
 func (r *artistResource) query(c *gin.Context) {
 	count, err := r.service.Count(c)
 	if err != nil {
@@ -79,6 +83,8 @@ func (r *artistResource) query(c *gin.Context) {
 	})
 }
 
+// create call service method to execute business logic
+// and return JSON data
 func (r *artistResource) create(c *gin.Context) {
 	var model models.Artist
 	if err := c.Bind(&model); err != nil {
@@ -98,6 +104,8 @@ func (r *artistResource) create(c *gin.Context) {
 	})
 }
 
+// update verify rest params, call service method to execute business logic
+// and return JSON data
 func (r *artistResource) update(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("artistID"))
 	if err != nil {
@@ -129,6 +137,8 @@ func (r *artistResource) update(c *gin.Context) {
 	})
 }
 
+// delete verify rest params, call service method to execute business logic
+// and return JSON data
 func (r *artistResource) delete(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("artistID"))
 	if err != nil {

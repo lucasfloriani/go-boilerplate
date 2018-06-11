@@ -11,7 +11,9 @@ type Artist struct {
 	Nome string `json:"nome"`
 }
 
-// Validate validates the Artist fields.
+// Validate validates the Artist fields,
+// this is executed before Create and Update actions
+// from gorm, like a Observer Design Pattern.
 func (a Artist) Validate() error {
 	return validation.ValidateStruct(&a,
 		validation.Field(&a.Nome, validation.Required, validation.Length(0, 120)),

@@ -15,6 +15,8 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
+// DatabaseConnection contains all 3 types of environments
+// and their databases, selected by app.Config.Environment
 type DatabaseConnection struct {
 	Test struct {
 		Adapter  string `required:"true"`
@@ -52,8 +54,10 @@ func Connect() (db *gorm.DB) {
 		log.Fatalf("Got error when connect database, the error is '%v'", err)
 	}
 
+	// Add option to show all sql logs. Default is false
 	db.LogMode(app.Config.ShowSQL)
 
+	// Check if need to rebuild the database
 	if app.Config.Migrate {
 		migrate(db)
 	}

@@ -7,7 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// ArtistDAO persists artist data in database
+// ArtistDAO persists artist data in database using gorm
+// functions, contains methods for each CRUD actions.
 type ArtistDAO struct{}
 
 // NewArtistDAO creates a new ArtistDAO

@@ -8,16 +8,16 @@ import (
 )
 
 func main() {
-	// Carrega dados de configuração
+	// Loads configuration data
 	if err := app.LoadConfig("./config"); err != nil {
 		panic(fmt.Errorf("Invalid application configuration: %s", err))
 	}
 
-	// Conecta ao banco de dados
+	// Connects to the database
 	database := db.Connect()
 	defer database.Close()
 
-	// Roda o servidor
+	// Runs the server
 	routers := router.Setup(database)
 	routers.Run(fmt.Sprintf(":%v", app.Config.ServerPort))
 }

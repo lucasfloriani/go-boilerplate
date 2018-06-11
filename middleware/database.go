@@ -5,7 +5,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-// DBtoContext adds options to gin context to get database instance
+// DBtoContext adds option to get database singleton connection in gin context
 func DBtoContext(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Set("DB", db)

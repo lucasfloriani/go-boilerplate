@@ -1,34 +1,28 @@
 package middleware
 
 import (
-	"go-boilerplate/models"
 	"time"
 
 	"github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"
 )
 
+// GetJWTAuth contains all middleware functions about JWT authentication
 func GetJWTAuth() (authMiddleware *jwt.GinJWTMiddleware) {
 	authMiddleware = &jwt.GinJWTMiddleware{
 		Realm:      "test zone",
 		Key:        []byte("secret key"),
 		Timeout:    time.Hour,
 		MaxRefresh: time.Hour,
-		Authenticator: func(userId string, password string, c *gin.Context) (interface{}, bool) {
+		Authenticator: func(userId string, password string, c *gin.Context) (string, bool) {
 			if (userId == "admin" && password == "admin") || (userId == "test" && password == "test") {
-				user := &models.User{
-					Nome:    "Bo-Yi",
-					Usuario: "usuario",
-				}
-				user.ID = 1
-
-				return user, true
+				return userId, true
 			}
 
-			return nil, false
+			return "", false
 		},
-		Authorizator: func(user interface{}, c *gin.Context) bool {
-			if v, ok := user.(string); ok && v == "admin" {
+		Authorizator: func(user string, c *gin.Context) bool {
+			if user == "admin" {
 				return true
 			}
 

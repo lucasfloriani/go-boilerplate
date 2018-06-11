@@ -1,11 +1,12 @@
+# Test database to test all sorts of actions, future database to TDD/BDD
 test:
   adapter: postgres
   database: dbname=goboilerplatetest sslmode=disable user=postgres password=123456
-
+# Development database to develop the application
 development:
   adapter: postgres
   database: dbname=goboilerplatedevelopment sslmode=disable user=postgres password=123456
-
+# Production online database of application
 production:
   adapter: postgres
   database: dbname=goboilerplateproduction sslmode=disable user=postgres password=123456

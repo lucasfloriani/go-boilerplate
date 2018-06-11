@@ -119,6 +119,8 @@ func (p *PaginatedList) BuildLinks(baseURL string, defaultPerPage int) [4]string
 	return links
 }
 
+// GetPaginatedListFromRequest query by pagination parameters
+// and returns a list
 func GetPaginatedListFromRequest(c *gin.Context, count int) *PaginatedList {
 	page := parseInt(c.Query("page"), 1)
 	perPage := parseInt(c.Query("per_page"), DefaultPageSize)
@@ -131,6 +133,8 @@ func GetPaginatedListFromRequest(c *gin.Context, count int) *PaginatedList {
 	return NewPaginatedList(page, perPage, count)
 }
 
+// parseInt check string value and try to convert to integer,
+// if ok returns converted value, else returns the defaultValue
 func parseInt(value string, defaultValue int) int {
 	if value == "" {
 		return defaultValue
