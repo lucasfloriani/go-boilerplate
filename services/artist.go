@@ -9,7 +9,7 @@ import (
 // artistDAO specifies the interface of the artist DAO needed by ArtistService.
 type artistDAO interface {
 	// Get returns the artist with the specified artist ID.
-	Get(c *gin.Context, id int) (*models.Artist, error)
+	Get(c *gin.Context, id uint) (*models.Artist, error)
 	// Count returns the number of artists.
 	Count(c *gin.Context) (int, error)
 	// Query returns the list of artists with the given offset and limit.
@@ -17,9 +17,9 @@ type artistDAO interface {
 	// Create saves a new artist in the storage.
 	Create(c *gin.Context, artist *models.Artist) error
 	// Update updates the artist with given ID in the storage.
-	Update(c *gin.Context, id int, artist *models.Artist) error
+	Update(c *gin.Context, id uint, artist *models.Artist) error
 	// Delete removes the artist with given ID from the storage.
-	Delete(c *gin.Context, id int) error
+	Delete(c *gin.Context, id uint) error
 }
 
 // ArtistService provides services related with artists.
@@ -33,15 +33,12 @@ func NewArtistService(dao artistDAO) *ArtistService {
 }
 
 // Get returns the artist with the specified the artist ID.
-func (s *ArtistService) Get(c *gin.Context, id int) (*models.Artist, error) {
+func (s *ArtistService) Get(c *gin.Context, id uint) (*models.Artist, error) {
 	return s.dao.Get(c, id)
 }
 
 // Create creates a new artist.
 func (s *ArtistService) Create(c *gin.Context, model *models.Artist) (*models.Artist, error) {
-	if err := model.Validate(); err != nil {
-		return nil, err
-	}
 	if err := s.dao.Create(c, model); err != nil {
 		return nil, err
 	}
@@ -49,10 +46,7 @@ func (s *ArtistService) Create(c *gin.Context, model *models.Artist) (*models.Ar
 }
 
 // Update updates the artist with the specified ID.
-func (s *ArtistService) Update(c *gin.Context, id int, model *models.Artist) (*models.Artist, error) {
-	if err := model.Validate(); err != nil {
-		return nil, err
-	}
+func (s *ArtistService) Update(c *gin.Context, id uint, model *models.Artist) (*models.Artist, error) {
 	if err := s.dao.Update(c, id, model); err != nil {
 		return nil, err
 	}
@@ -60,7 +54,7 @@ func (s *ArtistService) Update(c *gin.Context, id int, model *models.Artist) (*m
 }
 
 // Delete deletes the artist with the specified ID.
-func (s *ArtistService) Delete(c *gin.Context, id int) (*models.Artist, error) {
+func (s *ArtistService) Delete(c *gin.Context, id uint) (*models.Artist, error) {
 	artist, err := s.dao.Get(c, id)
 	if err != nil {
 		return nil, err

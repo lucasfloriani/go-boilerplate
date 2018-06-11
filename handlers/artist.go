@@ -1,8 +1,8 @@
 package handlers
 
 import (
+	"go-boilerplate/helper"
 	"go-boilerplate/models"
-	"golang-restful-starter-kit/app"
 	"net/http"
 	"strconv"
 
@@ -12,12 +12,12 @@ import (
 type (
 	// artistService specifies the interface for the artist service needed by artistResource.
 	artistService interface {
-		Get(rs app.RequestScope, id int) (*models.Artist, error)
-		Query(rs app.RequestScope, offset, limit int) ([]models.Artist, error)
-		Count(rs app.RequestScope) (int, error)
-		Create(rs app.RequestScope, model *models.Artist) (*models.Artist, error)
-		Update(rs app.RequestScope, id int, model *models.Artist) (*models.Artist, error)
-		Delete(rs app.RequestScope, id int) (*models.Artist, error)
+		Get(c *gin.Context, id uint) (*models.Artist, error)
+		Query(c *gin.Context, offset, limit int) ([]models.Artist, error)
+		Count(c *gin.Context) (int, error)
+		Create(c *gin.Context, model *models.Artist) (*models.Artist, error)
+		Update(c *gin.Context, id uint, model *models.Artist) (*models.Artist, error)
+		Delete(c *gin.Context, id uint) (*models.Artist, error)
 	}
 
 	// artistResource defines the handlers for the CRUD APIs.
@@ -26,24 +26,27 @@ type (
 	}
 )
 
-// ServeArtist sets up the routing of artist endpoints and the corresponding handlers.
-func ServeArtistResource(r *gin.Engine, service artistService) {
+// ServeArtistResource sets up the routing of artist endpoints and the corresponding handlers.
+func ServeArtistResource(r *gin.RouterGroup, service artistService) {
 	at := &artistResource{service}
-	r.GET("/artists/:artistID", at.get)
-	r.GET("/artists", at.query)
-	r.POST("/artists", at.create)
-	r.PUT("/artists/:artistID", at.update)
-	r.DELETE("/artists/:artistID", at.delete)
+	artistGroup := r.Group("/artists")
+	{
+		artistGroup.GET("/:artistID", at.get)
+		artistGroup.GET("/", at.query)
+		artistGroup.POST("/", at.create)
+		artistGroup.PUT("/:artistID", at.update)
+		artistGroup.DELETE("/:artistID", at.delete)
+	}
 }
 
 func (r *artistResource) get(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+	id, err := strconv.Atoi(c.Param("artistID"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "ID do artista é inválido"})
 		return
 	}
 
-	response, err := r.service.Get(c, id)
+	response, err := r.service.Get(c, uint(id))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err})
 		return
@@ -62,63 +65,86 @@ func (r *artistResource) query(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err})
 		return
 	}
-	paginatedList := getPaginatedListFromRequest(c, count)
-	items, err := r.service.Query(app.GetRequestScope(c), paginatedList.Offset(), paginatedList.Limit())
+	paginatedList := helper.GetPaginatedListFromRequest(c, count)
+	items, err := r.service.Query(c, paginatedList.Offset(), paginatedList.Limit())
 	if err != nil {
-		return err
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
 	}
 	paginatedList.Items = items
-	return c.Write(paginatedList)
+	c.JSON(http.StatusFound, gin.H{
+		"id":      "",
+		"error":   "",
+		"message": paginatedList,
+	})
 }
 
 func (r *artistResource) create(c *gin.Context) {
 	var model models.Artist
-	if err := c.Read(&model); err != nil {
-		return err
+	if err := c.Bind(&model); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
 	}
-	response, err := r.service.Create(app.GetRequestScope(c), &model)
+	response, err := r.service.Create(c, &model)
 	if err != nil {
-		return err
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
 	}
 
-	return c.Write(response)
+	c.JSON(http.StatusCreated, gin.H{
+		"id":      response.ID,
+		"error":   "",
+		"message": response,
+	})
 }
 
 func (r *artistResource) update(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+	id, err := strconv.Atoi(c.Param("artistID"))
 	if err != nil {
-		return err
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
 	}
 
-	rs := app.GetRequestScope(c)
-
-	model, err := r.service.Get(rs, id)
+	model, err := r.service.Get(c, uint(id))
 	if err != nil {
-		return err
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
 	}
 
-	if err := c.Read(model); err != nil {
-		return err
+	if err := c.Bind(model); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
 	}
 
-	response, err := r.service.Update(rs, id, model)
+	response, err := r.service.Update(c, uint(id), model)
 	if err != nil {
-		return err
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
 	}
 
-	return c.Write(response)
+	c.JSON(http.StatusOK, gin.H{
+		"id":      response.ID,
+		"error":   "",
+		"message": response,
+	})
 }
 
 func (r *artistResource) delete(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+	id, err := strconv.Atoi(c.Param("artistID"))
 	if err != nil {
-		return err
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
 	}
 
-	response, err := r.service.Delete(app.GetRequestScope(c), id)
+	response, err := r.service.Delete(c, uint(id))
 	if err != nil {
-		return err
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
 	}
 
-	return c.Write(response)
+	c.JSON(http.StatusOK, gin.H{
+		"id":      response.ID,
+		"error":   "",
+		"message": response,
+	})
 }

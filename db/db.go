@@ -2,6 +2,7 @@ package db
 
 import (
 	"go-boilerplate/app"
+	"go-boilerplate/models"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -51,9 +52,7 @@ func Connect() (db *gorm.DB) {
 		log.Fatalf("Got error when connect database, the error is '%v'", err)
 	}
 
-	if app.Config.ShowSQL {
-		db.LogMode(true)
-	}
+	db.LogMode(app.Config.ShowSQL)
 
 	if app.Config.Migrate {
 		migrate(db)
@@ -69,7 +68,13 @@ func Instance(c *gin.Context) *gorm.DB {
 
 // migrate rebuild the database
 func migrate(db *gorm.DB) {
-	db.DropTableIfExists()
+	db.DropTableIfExists(
+		&models.Artist{},
+		&models.User{},
+	)
 
-	db.AutoMigrate()
+	db.AutoMigrate(
+		&models.Artist{},
+		&models.User{},
+	)
 }

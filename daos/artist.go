@@ -1,10 +1,10 @@
 package daos
 
 import (
-	"go-boilerplate/app"
+	dbpkg "go-boilerplate/db"
 	"go-boilerplate/models"
 
-	"github.com/jinzhu/gorm"
+	"github.com/gin-gonic/gin"
 )
 
 // ArtistDAO persists artist data in database
@@ -16,46 +16,50 @@ func NewArtistDAO() *ArtistDAO {
 }
 
 // Get reads the artist with the specified ID from the database.
-func (dao *ArtistDAO) Get(db *gorm.DB, id int) (artist *models.Artist, err error) {
-	err = db.First(artist, id).Error
-	return artist, err
+func (dao *ArtistDAO) Get(c *gin.Context, id uint) (*models.Artist, error) {
+	artist := models.Artist{}
+	db := dbpkg.Instance(c)
+	err := db.First(&artist, id).Error
+	return &artist, err
 }
 
 // Create saves a new artist record in the database.
 // The Artist.Id field will be populated with an automatically generated ID upon successful saving.
-func (dao *ArtistDAO) Create(rs app.RequestScope, artist *models.Artist) error {
-	artist.Id = 0
-	return rs.Tx().Model(artist).Insert()
+func (dao *ArtistDAO) Create(c *gin.Context, artist *models.Artist) error {
+	db := dbpkg.Instance(c)
+	return db.Save(&artist).Error
 }
 
 // Update saves the changes to an artist in the database.
-func (dao *ArtistDAO) Update(rs app.RequestScope, id int, artist *models.Artist) error {
-	if _, err := dao.Get(rs, id); err != nil {
+func (dao *ArtistDAO) Update(c *gin.Context, id uint, artist *models.Artist) error {
+	if _, err := dao.Get(c, id); err != nil {
 		return err
 	}
-	artist.Id = id
-	return rs.Tx().Model(artist).Exclude("Id").Update()
+	db := dbpkg.Instance(c)
+	err := db.Save(&artist).Error
+	return err
 }
 
 // Delete deletes an artist with the specified ID from the database.
-func (dao *ArtistDAO) Delete(rs app.RequestScope, id int) error {
-	artist, err := dao.Get(rs, id)
+func (dao *ArtistDAO) Delete(c *gin.Context, id uint) error {
+	artist, err := dao.Get(c, id)
 	if err != nil {
 		return err
 	}
-	return rs.Tx().Model(artist).Delete()
+	db := dbpkg.Instance(c)
+	return db.Delete(&artist).Error
 }
 
 // Count returns the number of the artist records in the database.
-func (dao *ArtistDAO) Count(rs app.RequestScope) (int, error) {
-	var count int
-	err := rs.Tx().Select("COUNT(*)").From("artist").Row(&count)
-	return count, err
+func (dao *ArtistDAO) Count(c *gin.Context) (count int, err error) {
+	db := dbpkg.Instance(c)
+	err = db.Model(&models.Artist{}).Count(&count).Error
+	return
 }
 
 // Query retrieves the artist records with the specified offset and limit from the database.
-func (dao *ArtistDAO) Query(rs app.RequestScope, offset, limit int) ([]models.Artist, error) {
+func (dao *ArtistDAO) Query(c *gin.Context, offset, limit int) ([]models.Artist, error) {
 	artists := []models.Artist{}
-	err := rs.Tx().Select().OrderBy("id").Offset(int64(offset)).Limit(int64(limit)).All(&artists)
-	return artists, err
+	db := dbpkg.Instance(c)
+	return artists, db.Offset(offset).Limit(limit).Order("id asc").Find(&artists).Error
 }

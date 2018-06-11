@@ -21,8 +21,6 @@ type appConfig struct {
 	ShowSQL bool `mapstructure:"show_sql"`
 	// the server port. Defaults to 8080
 	ServerPort int `mapstructure:"server_port"`
-	// the data source name (DSN) for connecting to the database. required.
-	DSN string `mapstructure:"dsn"`
 	// the signing method for JWT. Defaults to "HS256"
 	JWTSigningMethod string `mapstructure:"jwt_signing_method"`
 	// JWT signing key. required.
@@ -33,7 +31,6 @@ type appConfig struct {
 
 func (config appConfig) Validate() error {
 	return validation.ValidateStruct(&config,
-		validation.Field(&config.DSN, validation.Required),
 		validation.Field(&config.JWTSigningKey, validation.Required),
 		validation.Field(&config.JWTVerificationKey, validation.Required),
 	)
@@ -47,13 +44,13 @@ func LoadConfig(configPaths ...string) error {
 	v.SetConfigName("app")
 	v.SetConfigType("yaml")
 	v.SetEnvPrefix("restful")
-	v.AutomaticEnv()
 	v.SetDefault("environment", "production")
 	v.SetDefault("database_file", "config/database.yml")
 	v.SetDefault("migrate", false)
 	v.SetDefault("show_sql", false)
 	v.SetDefault("server_port", 8080)
 	v.SetDefault("jwt_signing_method", "HS256")
+	v.AutomaticEnv()
 	for _, path := range configPaths {
 		v.AddConfigPath(path)
 	}

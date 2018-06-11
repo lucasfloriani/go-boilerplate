@@ -1,11 +1,11 @@
 test:
   adapter: postgres
-  database: dbname=databasename sslmode=disable user=postgres password=123456
+  database: dbname=goboilerplatetest sslmode=disable user=postgres password=123456
 
 development:
   adapter: postgres
-  database: dbname=databasename sslmode=disable user=postgres password=123456
+  database: dbname=goboilerplatedevelopment sslmode=disable user=postgres password=123456
 
 production:
   adapter: postgres
-  database: dbname=databasename sslmode=disable user=postgres password=123456
+  database: dbname=goboilerplateproduction sslmode=disable user=postgres password=123456
