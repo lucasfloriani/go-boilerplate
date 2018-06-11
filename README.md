@@ -5,22 +5,22 @@ Seu principal intuito foi criar uma estrutura backend para ser utilizada junto c
 
 ## Dependências do Projeto
 
-* [Gorm](https://github.com/jinzhu/gorm)
-* [Gin](https://github.com/gin-gonic/gin)
-* [Ozzo Validation](https://github.com/go-ozzo/ozzo-validation)
-* [Viper](https://github.com/spf13/viper)
-* [Configor](https://github.com/jinzhu/configor)
-* [Gin JWT](https://github.com/appleboy/gin-jwt)
-* [Gin Contrib - Cors](https://github.com/gin-contrib/cors)
-* [Gin Contrib - Gzip](https://github.com/gin-contrib/gzip)
-* [Gin Contrib - Location](https://github.com/gin-contrib/location)
+* [Gorm (Banco de Dados)](https://github.com/jinzhu/gorm)
+* [Gin (HTTP Router)](https://github.com/gin-gonic/gin)
+* [Ozzo Validation (Validação de campos)](https://github.com/go-ozzo/ozzo-validation)
+* [Viper (Auxiliar de Configuração via Flags, Variaveis de Ambiente e Arquivos)](https://github.com/spf13/viper)
+* [Configor (Leitor de arquivos YAML, JSON, etc)](https://github.com/jinzhu/configor)
+* [Gin JWT (Middleware para validação com JWT)](https://github.com/appleboy/gin-jwt)
+* [Gin Contrib - Cors (Middleware para liberação de CORS)](https://github.com/gin-contrib/cors)
+* [Gin Contrib - Gzip (Middleware para Gzip)](https://github.com/gin-contrib/gzip)
+* [Gin Contrib - Location (Middleware para pegar URL do projeto)](https://github.com/gin-contrib/location)
 
 ## Dependências Auxiliares
 
 Bibliotecas que não foram adicionadas ao projeto porem podem ser utilizadas para auxiliar casos especificos:
 
-* Logrus
-* Boilr
+* [Logrus (Criação de logs)](https://github.com/sirupsen/logrus)
+* [Boilr (Criação de boilerplates via CLI)](https://github.com/tmrts/boilr)
 
 ## Projetos Inspirados
 
