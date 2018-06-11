@@ -30,3 +30,16 @@ Lista dos projetos onde certas partes de código foram copiadas ou retiradas ide
 * [Alloy](https://github.com/olliecoleman/alloy)
 * [Golang gin Realworld Example App](https://github.com/gothinkster/golang-gin-realworld-example-app)
 * [Go RESTful Application Starter Kit](https://github.com/qiangxue/golang-restful-starter-kit)
+
+## Estrutura de Pastas
+**/app:** configurações de nivel de aplicação.\
+**/config:** arquivos .yaml com configuração de nivel de aplicação.\
+**/daos:** objetos DAO contendo os metodos CRUD.\
+**/db:** conexão com o banco de dados com base nas configurações de nivel de aplicação.\
+**/handlers:** entrypoints REST da aplicação.\
+**/helper:** funções auxiliares da aplicação.\
+**/middleware:** middlewares (funções) customizados para adicionar aos entrypoints dos handlers.\
+**/models:** structs dos objetos do banco.\
+**/route:** criação das rotas e middlewares default com chamada da funções de criação de rotas.\
+**/services:** logica de negócio.\
+**/vendor:** dependências do projeto.
