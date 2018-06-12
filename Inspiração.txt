@@ -1,4 +1,0 @@
-https://github.com/dhax/go-base
-https://github.com/olliecoleman/alloy
-https://github.com/gothinkster/golang-gin-realworld-example-app
-https://github.com/qiangxue/golang-restful-starter-kit
